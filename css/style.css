@@ -1,0 +1,61 @@
+@import url('https://fonts.googleapis.com/css2?family=Teko:wght@700&display=swap');
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  transition: 200ms;
+}
+
+input {
+  width: fit-content;
+}
+
+#display {
+  font-size: calc(8rem + 4vh);
+  font-family: 'Teko', sans-serif;
+}
+
+#container,
+#counter {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#counter-config {
+  display: flex;
+  opacity: 1;
+  transition: 200ms;
+}
+
+#counter {
+  width: 100%;
+  transition: 500ms;
+}
+
+#failiureMsg {
+  opacity: 0;
+  transition: 1000ms;
+}
+
+button {
+  font-size: calc(2vmax + 5px);
+  padding: 5px 2vw;
+  margin: 0.5rem;
+  border: none;
+  border-radius: 0.5rem;
+  background-color: inherit;
+  color: inherit;
+  box-shadow: 0 0 10px rgba(115, 115, 115, 1);
+  cursor: pointer;
+  font-family: 'Teko', sans-serif;
+  transition: 200ms;
+}
+
+button:hover {
+  background-color: rgba(201, 200, 200, 0.25);
+}
