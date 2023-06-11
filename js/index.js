@@ -9,7 +9,8 @@ var failiureMsg;
 var intervalID;
 var failiureMsgID;
 var isRunning = false;
-var oldIsRunning = isRunning;
+var clickedStart = false;
+var footerDate;
 var tips = [
     "Practice makes perfect.",
     "Practice meditation or exercise whenever stressed.",
@@ -28,43 +29,59 @@ var failiureMsgs = [
 window.onload = function () {
     // Get all the elements once they load.
     counterLbl = document.querySelector('#display');
-    configInputs = document.getElementById("counter-config");
-    counterContainer = document.getElementById("counter");
-    toggleBtn = document.getElementById("toggle-btn");
+    configInputs = document.querySelector("#counter-config");
+    counterContainer = document.querySelector("#counter");
+    toggleBtn = document.querySelector("#toggle-btn");
     minutesInput = document.querySelector('#minutes');
     secondsInput = document.querySelector('#seconds');
     tip = document.querySelector('#tip');
     failiureMsg = document.querySelector('#failiureMsg');
-    generateTip(); // Generate a tip on load.
-    generateFailiureMsg(); // Generate a failiure message on load.
-    setInterval(generateTip, 10000); // Then generate a tip every 10 seconds.
+    footerDate = document.querySelector('#footer-date');
+    updateUIText();
+    setInterval(updateUIText, 10000); // Then generate a tip every 10 seconds.
+    updateFooterDate();
 };
 window.addEventListener('pointermove', resetTimer);
 window.addEventListener('keydown', resetTimer);
+window.addEventListener('click', resetTimer);
+function updateFooterDate() {
+    var year = new Date().getFullYear();
+    var footerDate = document.querySelector('#footer-date');
+    footerDate.innerText = "© " + year.toString();
+}
 function resetTimer() {
     if (failiureMsgID) {
         clearTimeout(failiureMsgID);
+        setMsgOpacity("0");
     }
     if (isRunning) {
+        updateMinutes();
+        updateSeconds();
+        if (clickedStart) {
+            clickedStart = false;
+            return;
+        }
         setMsgOpacity("1");
         failiureMsgID = setTimeout(function () {
             setMsgOpacity("0");
-            setTimeout(generateFailiureMsg, 1000); // Delay the new message so the text can fade out.
             clearTimeout(failiureMsgID);
         }, 5000);
         clearInterval(intervalID);
-        updateMinutes();
-        updateSeconds();
         startTimer();
     }
 }
-function generateTip() {
-    var selected = tips[Math.floor(Math.random() * tips.length)];
-    tip.innerText = tip.innerHTML.substring(0, 5) + selected;
+function generateRandomFromArray(arr, textChecker) {
+    while (true) {
+        var selected = arr[Math.floor(Math.random() * arr.length)];
+        if (selected !== textChecker) {
+            return selected;
+        }
+    }
 }
-function generateFailiureMsg() {
-    var selected = failiureMsgs[Math.floor(Math.random() * failiureMsgs.length)];
-    failiureMsg.innerText = selected;
+function updateUIText() {
+    var tipSubstring = tip.innerText.substring(5);
+    tip.innerText = tip.innerHTML.substring(0, 5) + generateRandomFromArray(tips, tipSubstring);
+    failiureMsg.innerText = generateRandomFromArray(failiureMsgs, failiureMsg.innerText);
 }
 function setMsgOpacity(opacity) {
     failiureMsg.style.opacity = opacity;
@@ -93,6 +110,7 @@ function updateMinutes() {
     }
     var minutes = minutesInput.value.padStart(2, '0');
     counterLbl.innerText = minutes + counterLbl.innerText.slice(2);
+    minutesInput.value = minutes;
 }
 function updateSeconds() {
     if (+secondsInput.value > 59) {
@@ -100,6 +118,7 @@ function updateSeconds() {
     }
     var seconds = secondsInput.value.padStart(2, '0');
     counterLbl.innerText = counterLbl.innerText.slice(0, 3) + seconds;
+    secondsInput.value = seconds;
 }
 function toggleStart() {
     if (+minutesInput.value == 0 && +secondsInput.value == 0) {
@@ -109,45 +128,33 @@ function toggleStart() {
     if (!isRunning) {
         // Start
         // Hide the inputs that configure the counter
-        configInputs.style.opacity = "0";
+        configInputs.style.display = "none";
         toggleBtn.innerText = "Stop";
         // Make the visual changes!!
         document.body.style.backgroundColor = "#000";
         document.body.style.color = "#fff";
         startTimer();
+        clickedStart = true;
     }
     else {
         // Stop
         // Show the inputs that configure the counter
         clearInterval(intervalID);
-        configInputs.style.opacity = "1";
+        configInputs.style.display = "block";
         toggleBtn.innerText = "Begin";
         // Make the visual changes!!
         document.body.style.backgroundColor = "#fff";
         document.body.style.color = "#000";
     }
     isRunning = !isRunning; // After toggling, update the state.
-    toggleCounterPosition();
     resetTimer();
-}
-function toggleCounterPosition() {
-    if (isRunning) {
-        counterContainer.style.position = "fixed";
-        counterContainer.style.top = "50%";
-        counterContainer.style.left = "50%";
-        counterContainer.style.transform = "translate(-50%, -50%)";
-    }
-    else {
-        counterContainer.style.position = "relative";
-        counterContainer.style.top = "0";
-        counterContainer.style.left = "0";
-        counterContainer.style.transform = "translate(0, 0)";
-    }
 }
 function startTimer() {
     intervalID = setInterval(function () {
         var splitCounter = counterLbl.innerText.split(':');
         var minutes = splitCounter[0], seconds = splitCounter[1];
+        var clockTick = new Audio("assets/clock-tick.mp3");
+        clockTick.volume = 0.3;
         var secondsNum = +seconds;
         var minutesNum = +minutes;
         if (secondsNum === 0 && minutesNum === 0) {
@@ -155,8 +162,8 @@ function startTimer() {
             toggleStart();
             alert("All Done!");
             // Reset properties.
-            minutesInput.value = "0";
-            secondsInput.value = "0";
+            minutesInput.value = "00";
+            secondsInput.value = "00";
             return;
         }
         if (secondsNum === 0) {
@@ -165,6 +172,7 @@ function startTimer() {
         }
         secondsNum--;
         updateCounterText(minutesNum, secondsNum);
+        clockTick.play();
     }, 1000);
 }
 function updateCounterText(minutes, seconds) {

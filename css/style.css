@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Teko:wght@700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans&family=Teko:wght@700&display=swap');
+
 * {
   margin: 0;
   padding: 0;
@@ -7,11 +8,31 @@
 
 body {
   transition: 200ms;
+  height: 100vh;
+  font-family: 'DM Sans', sans-serif;
 }
 
 input {
   width: fit-content;
+  padding: 0 0.3rem;
+  font-size: calc(4vb + 10px);
+  border-radius: 5px;
+  text-align: center;
+  position: relative;
+  font-family: 'Teko', sans-serif;
 }
+
+label {
+  position: absolute;
+  background-color: white;
+  padding: 0 3px;
+  transform: translate(10px, -60%);
+  z-index: 1;
+  font-size: calc(1vb + 10px);
+  transition: none;
+  user-select: none;
+}
+
 
 #display {
   font-size: calc(8rem + 4vh);
@@ -19,7 +40,9 @@ input {
 }
 
 #container,
-#counter {
+#counter,
+#counter-config,
+#additional-info {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -27,13 +50,16 @@ input {
 }
 
 #counter-config {
-  display: flex;
-  opacity: 1;
-  transition: 200ms;
+  flex-direction: row;
+  display: block;
 }
 
 #counter {
   width: 100%;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   transition: 500ms;
 }
 
@@ -43,9 +69,10 @@ input {
 }
 
 button {
-  font-size: calc(2vmax + 5px);
-  padding: 5px 2vw;
+  font-size: 4vb;
+  padding: 10px calc(1vb + 10px);
   margin: 0.5rem;
+  users-select: none;
   border: none;
   border-radius: 0.5rem;
   background-color: inherit;
@@ -54,6 +81,11 @@ button {
   cursor: pointer;
   font-family: 'Teko', sans-serif;
   transition: 200ms;
+}
+
+#additional-info {
+  position: fixed;
+  bottom: 0;
 }
 
 button:hover {

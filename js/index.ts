@@ -9,7 +9,8 @@ let failiureMsg: HTMLHeadingElement;
 let intervalID: number;
 let failiureMsgID: number;
 let isRunning: boolean = false;
-let oldIsRunning: boolean = isRunning;
+let clickedStart: boolean = false;
+let footerDate: HTMLSpanElement;
 const tips: string[] = [
   "Practice makes perfect.",
   "Practice meditation or exercise whenever stressed.",
@@ -29,58 +30,71 @@ const failiureMsgs: string[] = [
 window.onload = function() {
   // Get all the elements once they load.
   counterLbl = document.querySelector('#display');
-  configInputs = document.getElementById("counter-config");
-  counterContainer = document.getElementById("counter");
-  toggleBtn = document.getElementById("toggle-btn");
+  configInputs = document.querySelector("#counter-config");
+  counterContainer = document.querySelector("#counter");
+  toggleBtn = document.querySelector("#toggle-btn");
   minutesInput = document.querySelector('#minutes');
   secondsInput = document.querySelector('#seconds');
   tip = document.querySelector('#tip');
   failiureMsg = document.querySelector('#failiureMsg');
-  generateTip(); // Generate a tip on load.
-  generateFailiureMsg(); // Generate a failiure message on load.
-  setInterval(generateTip, 10000); // Then generate a tip every 10 seconds.
+  footerDate = document.querySelector('#footer-date');
+  updateUIText();
+  setInterval(updateUIText, 10000); // Then generate a tip every 10 seconds.
+  updateFooterDate();
 }
 
 window.addEventListener('pointermove', resetTimer);
 window.addEventListener('keydown', resetTimer);
+window.addEventListener('click', resetTimer);
 
-function resetTimer() {
+function updateFooterDate(): void {
+  const year: number = new Date().getFullYear();
+  const footerDate: HTMLSpanElement = document.querySelector('#footer-date');
+  footerDate.innerText = "© " + year.toString();
+}
+
+function resetTimer(): void {
   if (failiureMsgID) {
     clearTimeout(failiureMsgID);
+    setMsgOpacity("0");
   }
   if (isRunning) {
+    updateMinutes();
+    updateSeconds();
+    if (clickedStart) {
+      clickedStart = false;
+      return;
+    }
     setMsgOpacity("1");
     failiureMsgID = setTimeout(function() {
       setMsgOpacity("0");
-      setTimeout(generateFailiureMsg, 1000); // Delay the new message so the text can fade out.
       clearTimeout(failiureMsgID);
     }, 5000);
     clearInterval(intervalID);
-    updateMinutes();
-    updateSeconds();
     startTimer();
   }
 }
 
-function generateTip() {
-  const selected: string = tips[
-    Math.floor(Math.random() * tips.length)
-  ];
-  tip.innerText = tip.innerHTML.substring(0, 5) + selected;
+function generateRandomFromArray(arr: any[], textChecker: string | null): string {
+  while (true) {
+    const selected: string = arr[Math.floor(Math.random() * arr.length)];
+    if (selected !== textChecker) {
+      return selected;
+    }
+  }
 }
 
-function generateFailiureMsg() {
-  const selected: string = failiureMsgs[
-    Math.floor(Math.random() * failiureMsgs.length)
-  ];
-  failiureMsg.innerText = selected;
+function updateUIText(): void {
+  const tipSubstring: string = tip.innerText.substring(5);
+  tip.innerText = tip.innerHTML.substring(0, 5) + generateRandomFromArray(tips, tipSubstring);
+  failiureMsg.innerText = generateRandomFromArray(failiureMsgs, failiureMsg.innerText);
 }
 
-function setMsgOpacity(opacity: string) {
+function setMsgOpacity(opacity: string): void {
   failiureMsg.style.opacity = opacity;
 }
 
-function configTimer(type: string) {
+function configTimer(type: string): void {
   if (minutesInput.value.length > 2 || secondsInput.value.length > 2) {
     alert("Please enter less than 2 digits.");
     minutesInput.value = minutesInput.value.slice(0, 2);
@@ -100,23 +114,25 @@ function configTimer(type: string) {
   }
 }
 
-function updateMinutes() {
+function updateMinutes(): void {
   if (+minutesInput.value > 59) {
     minutesInput.value = "59";
   }
   const minutes: string = minutesInput.value.padStart(2, '0');
   counterLbl.innerText = minutes + counterLbl.innerText.slice(2);
+  minutesInput.value = minutes;
 }
 
-function updateSeconds() {
+function updateSeconds(): void {
   if (+secondsInput.value > 59) {
     secondsInput.value = "59";
   }
   const seconds: string = secondsInput.value.padStart(2, '0');
   counterLbl.innerText = counterLbl.innerText.slice(0, 3) + seconds;
+  secondsInput.value = seconds;
 }
 
-function toggleStart() {
+function toggleStart(): void {
   if (+minutesInput.value == 0 && +secondsInput.value == 0) {
     alert("Please enter a valid time.");
     return;
@@ -125,7 +141,7 @@ function toggleStart() {
     // Start
 
     // Hide the inputs that configure the counter
-    configInputs.style.opacity = "0";
+    configInputs.style.display = "none";
     toggleBtn.innerText = "Stop";
 
     // Make the visual changes!!
@@ -133,11 +149,12 @@ function toggleStart() {
     document.body.style.color = "#fff";
 
     startTimer();
+    clickedStart = true;
   } else {
     // Stop
     // Show the inputs that configure the counter
     clearInterval(intervalID);
-    configInputs.style.opacity = "1";
+    configInputs.style.display = "block";
     toggleBtn.innerText = "Begin";
 
     // Make the visual changes!!
@@ -146,28 +163,15 @@ function toggleStart() {
 
   }
   isRunning = !isRunning; // After toggling, update the state.
-  toggleCounterPosition();
   resetTimer();
 }
 
-function toggleCounterPosition() {
-  if (isRunning) {
-    counterContainer.style.position = "fixed";
-    counterContainer.style.top = "50%";
-    counterContainer.style.left = "50%";
-    counterContainer.style.transform = "translate(-50%, -50%)";
-  } else {
-    counterContainer.style.position = "relative";
-    counterContainer.style.top = "0";
-    counterContainer.style.left = "0";
-    counterContainer.style.transform = "translate(0, 0)";
-  }
-}
-
-function startTimer() {
+function startTimer(): void {
   intervalID = setInterval(function() {
     const splitCounter: string[] = counterLbl.innerText.split(':');
-    const [minutes, seconds] = splitCounter;
+    const [minutes, seconds]: string[] = splitCounter;
+    let clockTick: HTMLAudioElement = new Audio("assets/clock-tick.mp3");
+    clockTick.volume = 0.3;
 
     let secondsNum: number = +seconds;
     let minutesNum: number = +minutes;
@@ -177,8 +181,8 @@ function startTimer() {
       toggleStart();
       alert("All Done!");
       // Reset properties.
-      minutesInput.value = "0";
-      secondsInput.value = "0";
+      minutesInput.value = "00";
+      secondsInput.value = "00";
       return;
     }
 
@@ -189,10 +193,11 @@ function startTimer() {
 
     secondsNum--;
     updateCounterText(minutesNum, secondsNum);
+    clockTick.play();
   }, 1000);
 }
 
-function updateCounterText(minutes: number, seconds: number) {
+function updateCounterText(minutes: number, seconds: number): void {
   const minutesStr: string = ("" + minutes).padStart(2, '0');
   const secondsStr: string = ("" + seconds).padStart(2, '0');
   counterLbl.innerText = minutesStr + ":" + secondsStr;

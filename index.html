@@ -2,6 +2,8 @@
 <html>
   <head>
     <title>Dopamine Reset Counter</title>
+    <meta name="stuff" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
     <link rel="stylesheet" type="text/css" href="css/style.css">
     <script src="js/index.js"></script>
   </head>
@@ -15,14 +17,15 @@
         <h3 id="failiureMsg"></h3>
         <h1 id="display">00:00</h1>
         <div id="counter-config">
-          <input type="number" id="minutes" maxlength="2" min="0" max="60" oninput="configTimer('min');" value="0">
-          <span>Minutes</span>
-          <input type="number" id="seconds" maxlength="2" min="0" max="59" oninput="configTimer('sec');" value="0">
-          <span>Seconds</span>
+          <label for="minutes">Minutes</label>
+          <input type="number" id="minutes" maxlength="2" min="0" max="60" oninput="configTimer('min');" value="00">
+          <label for="seconds">Seconds</label>
+          <input type="number" id="seconds" maxlength="2" min="0" max="59" oninput="configTimer('sec');" value="00">
         </div>
         <button id="toggle-btn" onclick="toggleStart();">Begin</button>
       </div>
-      <h3>What is "Dopamine"?</h3>
+      <div id="additional-info">
+        <h3>What is "Dopamine"?</h3>
         <p>
           Dopamine is a neurotransmitter in the brain that is responsible for the rewards center and how we feel pleasure and motivated.<br>
           Dopamine is helpful for us to feel motivated and happy to get our tasks done and feel good about the small things in life. However, too much
@@ -31,18 +34,23 @@
           This has become a problem in today's society as we are constantly bombarded with social media, video games, TV/movies, and even worse, drugs, that can
           lead to many forms of addictions. This is why it is important to take a break from technology and avoid drugs to help reset our dopamine levels.
         </p>
-      <h3>What is the purpose of this site?</h3>
-      <p>
-        The purpose of this site is to allow yourself to help give your brain a "rest" by looking at a blank screen and doing absolutely <strong>nothing</strong>,
-        as in staring at a blank screen and not moving the mouse or messing with the keyboard for a certain period of time. By doing this, you will allow your brain
-        to "recover" from all the dopamine received from high stimulating activity. This site can also be used to challenge yourself to see how long you can go when
-        doing nothing.<br>
-        <strong>
-          Please do note that this site should not be used as a replacement for professional help. If you are currently suffering from mental health problems or any sort
-          of addiction, please seek professional help. Please also take note that this will not immediately recover your dopamine levels; it will take time depending on
-          how severe it is. (I went through a dopamine recovery and it took about a year and a half to go back to normal, but it varies.)
-        </strong>
-      </p>
+        <h3>What is the purpose of this site?</h3>
+        <p>
+          The purpose of this site is to allow yourself to help give your brain a "rest" by looking at a blank screen and doing absolutely <strong>nothing</strong>,
+          as in staring at a blank screen and not moving the mouse or messing with the keyboard for a certain period of time. By doing this, you will allow your brain
+          to "recover" from all the dopamine received from high stimulating activity. This site can also be used to challenge yourself to see how long you can go when
+          doing nothing.<br>
+          <strong>
+            Please do note that this site should not be used as a replacement for professional help. If you are currently suffering from mental health problems or any sort
+            of addiction, please seek professional help. Please also take note that this will not immediately recover your dopamine levels; it will take time depending on
+            how severe it is. (I went through a dopamine recovery and it took about a year and a half to go back to normal, but it varies.)
+          </strong>
+        </p>
+        <span>v1.0 |
+          <a href="https://marke16.github.io/my-website/" target="_blank" rel="noreferrer noopener">Mark Evola</a> |
+          <span id="footer-date"></span>
+        </span>
+      </div>
     </div>
   </body>
 </html>
